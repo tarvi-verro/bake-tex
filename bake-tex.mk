@@ -1,12 +1,18 @@
 # Execute in the directory where the %.tex is at, using -f../Makefile
 
+ifeq ($(.DEFAULT_GOAL),)
 nothing:
 	@echo "Type in the PDF you'd like me to muster."
+endif
 
 B:=$(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 
-# List of source files, use when incl. this file
-SRC?=$(MAKECMDGOALS)
+# List of source files
+ifneq ($(MAKECMDGOALS),)
+SRC:=$(MAKECMDGOALS)
+else
+SRC:=$(.DEFAULT_GOAL)
+endif
 
 #echo "compiling $@...";
 SVGLAYER_TO_PDF = \
@@ -74,7 +80,7 @@ $B/texdeps: $B/texdeps.c
 	@echo "compiling texdeps..."
 	@gcc $< -Wall -o $@
 
-.aux/%.dep: %.tex | .aux $B/texdeps
+.aux/%.dep: %.tex | $B/texdeps .aux
 	@cat $< | $B/texdeps $*.pdf > $@
 
 
