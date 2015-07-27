@@ -100,6 +100,9 @@ static inline void incr(struct incr_arg *a)
 			//fprintf(stderr, "[31meof[39m\n");
 			int shortof = (B_SIZE - strt - r);
 			memmove(a->b + shortof, a->b, B_SIZE - shortof);
+			a->i[0] = shortof + strt;
+			if (a->esc[0] != -1)
+				a->esc[0] = shortof;
 			eof = 1;
 			return;
 		}
