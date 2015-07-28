@@ -45,6 +45,7 @@ SVGLAYER_SUM = \
 %.pdf: %.tex .aux/%.dep | .aux
 	@ln -sf ../$*.pdf .aux/$*.pdf
 	@ln -sf ../$*.tex .aux/$*.tex
+	@rm -f $@
 	@cd .aux && rubber -d $*.tex
 
 # Default, all layers render
