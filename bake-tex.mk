@@ -115,9 +115,14 @@ $B/texdeps: $B/texdeps.c
 			echo "$$OUT"; \
 		fi;
 
+# Checks the programs required by many of these scrips
+check:
+	@which soffice gnuplot inkscape pdflatex rubber xmlstarlet gimp sed \
+		gcc cksum grep
+
 clean:
 	@# Only deletes %.pdf's with a corresponding %.pdf_tex or %.tex
 	rm -f $$(ls *.tex 2>/dev/null | sed "s@\.\(tex\)\(\$$\|\s\)@.pdf @") \
 	rm -rf .aux/
 
-.PHONY: nothing clean
+.PHONY: nothing clean check
