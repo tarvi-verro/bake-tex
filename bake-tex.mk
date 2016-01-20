@@ -53,11 +53,18 @@ SVGLAYER_SUM = \
 	@echo "compiling $*.pdf_tex..."
 	@inkscape --file=$*.svg --export-pdf=.aux/$*.pdf --export-latex
 
-# Gnuplot rendering
+# Gnuplot rendering.
+# To add new commands to the "set terminal cairolatex pdf color" line, use the
+# following syntax on the very first line of the script:
+#
+# 	# term-cmds: <commands>
+#
+# These will be appended to the "set terminal" command line.
 .aux/%.gp_tex: %.gp | .aux
 	@echo "compiling $*.gp_tex..."
 	@cd .aux; \
-		printf "set terminal cairolatex pdf color\nset output '$*.tex'\n" \
+		cmds=$$(head -n1 ../$*.gp | grep -oP "(?<=^# term-cmds:).*"); \
+		printf "set terminal cairolatex pdf color $$cmds\nset output '$*.tex'\n" \
 		| cat - ../$*.gp | gnuplot && mv "$*.tex" "$*.gp_tex"
 
 # .xcf files rendering
@@ -66,7 +73,7 @@ SVGLAYER_SUM = \
 	@echo "(define (convert-xcf-to-pdf filename outfile) \
 		(let* ( \
 			(image (car (gimp-file-load RUN-NONINTERACTIVE filename filename))) \
-			(drawable (car (gimp-image-merge-visible-layers image CLIP-TO-IMAGE))) \
+			(drawable (car (gimp-image-merge-visible-layers image CLIP-TO-BOTTOM-LAYER))) \
 		) \
 		(file-pdf-save RUN-NONINTERACTIVE image drawable outfile outfile TRUE TRUE TRUE) \
 		(gimp-image-delete image) \
