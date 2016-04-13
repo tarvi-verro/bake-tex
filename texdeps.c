@@ -67,11 +67,12 @@ static void out_input(int len, const char *s)
 }
 
 struct incr_arg {
-	int *i;
+	int *i;		// Offset Iterator
 	int *l;
-	int *end;
-	char *b;
-	int *esc;
+	int *end;	// Boolean, is end of file reached?
+	char *b;	// Buffer
+	int *esc;	// Offset where escape character '\' was spotted.
+			// -1 if none has been spotted in reasonable range
 };
 
 static inline void incr(struct incr_arg *a)
@@ -139,7 +140,6 @@ int main(int argc, const char *argv[])
 	};
 	struct incr_arg *a = &argz;
 	incr(a);
-	assert(i == 0);
 
 	while (!end) {
 		if (b[i] == '\\') {
