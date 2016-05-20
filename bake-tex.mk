@@ -51,17 +51,19 @@ SVGLAYER_SUM = \
 # Default, all layers render
 .aux/%.pdf_tex: %.svg | .aux
 	@echo "compiling $*.pdf_tex..."
+	@mkdir -p $(dir $@)
 	@inkscape --file=$*.svg --export-pdf=.aux/$*.pdf --export-latex
 
 # Gnuplot rendering.
 # To add new commands to the "set terminal cairolatex pdf color" line, use the
 # following syntax on the very first line of the script:
 #
-# 	# term-cmds: <commands>
+#	# term-cmds: <commands>
 #
 # These will be appended to the "set terminal" command line.
 .aux/%.gp_tex: %.gp | .aux
 	@echo "compiling $*.gp_tex..."
+	@mkdir -p $(dir $@)
 	@cd .aux; \
 		cmds=$$(head -n1 ../$*.gp | grep -oP "(?<=^# term-cmds:).*"); \
 		printf "set terminal cairolatex pdf color $$cmds\nset output '$*.tex'\n" \
@@ -70,6 +72,7 @@ SVGLAYER_SUM = \
 # .xcf files rendering
 .aux/%_xcf.pdf: %.xcf | .aux
 	@echo "compiling $*_xcf.pdf..."
+	@mkdir -p $(dir $@)
 	@echo "(define (convert-xcf-to-pdf filename outfile) \
 		(let* ( \
 			(image (car (gimp-file-load RUN-NONINTERACTIVE filename filename))) \
@@ -114,6 +117,7 @@ $B/texdeps: $B/texdeps.c
 
 %.pdf: %.ods
 	@echo "compiling $*.pdf (from .ods)..."
+	@mkdir -p $(dir $@)
 	@OUT=`soffice --headless --convert-to pdf:writer_pdf_Export $*.ods 2>&1`; \
 		SOFFICE_RV=$$?; \
 		printf "$$OUT" | grep -q "error"; \
