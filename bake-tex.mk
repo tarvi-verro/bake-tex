@@ -46,7 +46,7 @@ SVGLAYER_SUM = \
 	@ln -sf ../$*.pdf .aux/$*.pdf
 	@ln -sf ../$*.tex .aux/$*.tex
 	@rm -f $@
-	@cd .aux && rubber -d $*.tex
+	@cd .aux && rubber --module xelatex $*.tex
 
 # Default, all layers render
 .aux/%.pdf_tex: %.svg | .aux
